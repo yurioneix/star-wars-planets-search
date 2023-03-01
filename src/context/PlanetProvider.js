@@ -4,6 +4,7 @@ import PlanetContext from './PlanetContext';
 
 export default function PlanetProvider({ children }) {
   const [planets, setPlanets] = useState([]);
+  const [planetsFilteredByName, setPlanetsFilteredByName] = useState([]);
 
   useEffect(() => {
     const starWarsPlanets = async () => {
@@ -18,7 +19,14 @@ export default function PlanetProvider({ children }) {
   }, []);
 
   return (
-    <PlanetContext.Provider value={ { planets, setPlanets } }>
+    <PlanetContext.Provider
+      value={ {
+        planets,
+        setPlanets,
+        planetsFilteredByName,
+        setPlanetsFilteredByName,
+      } }
+    >
       {children}
     </PlanetContext.Provider>
   );
