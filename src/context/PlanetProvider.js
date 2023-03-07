@@ -8,7 +8,11 @@ export default function PlanetProvider({ children }) {
   const [planetsFilteredByNumber, setPlanetsFilteredByNumber] = useState([]);
   const [filters, setFilters] = useState([]);
 
-  // const [inputPlanets, setInputPlanets] = useState('');
+  const [populationFilter, setPopulationFilter] = useState(false);
+  const [orbitalFilter, setOrbitalFilter] = useState(false);
+  const [diameterFilter, setDiameterFilter] = useState(false);
+  const [rotationFilter, setRotationFilter] = useState(false);
+  const [surfaceFilter, setsurfaceFilter] = useState(false);
 
   useEffect(() => {
     const starWarsPlanets = async () => {
@@ -24,14 +28,6 @@ export default function PlanetProvider({ children }) {
     starWarsPlanets();
   }, []);
 
-  // useEffect(() => {
-  //   const filteredPlanets = () => planets.filter(
-  //     (planet) => planet.name.toLowerCase().includes(inputPlanets.toLowerCase()),
-  //   );
-  //   setPlanetsFilteredByName(filteredPlanets);
-  //   setPlanets(filteredPlanets);
-  // }, [inputPlanets]);
-
   const filterPlanetsByNumber = ({ column, comparison, valueFilter }) => {
     const filteredByNumber = planetsFilteredByNumber.filter((planet) => {
       switch (comparison) {
@@ -45,15 +41,34 @@ export default function PlanetProvider({ children }) {
         return true;
       }
     });
-    console.log(filteredByNumber);
-    console.log(valueFilter);
     return filteredByNumber;
   };
 
   useEffect(() => {
+    console.log(filters);
     filters.forEach((filter) => {
       setPlanetsFilteredByNumber(filterPlanetsByNumber(filter));
       setPlanets(filterPlanetsByNumber(filter));
+
+      switch (filter.column) {
+      case 'population':
+        setPopulationFilter(true);
+        break;
+      case 'orbital_period':
+        setOrbitalFilter(true);
+        break;
+      case 'diameter':
+        setDiameterFilter(true);
+        break;
+      case 'rotation_period':
+        setRotationFilter(true);
+        break;
+      case 'surface_water':
+        setsurfaceFilter(true);
+        break;
+      default:
+        return true;
+      }
     });
   }, [filters]);
 
@@ -62,13 +77,17 @@ export default function PlanetProvider({ children }) {
       value={ {
         planets,
         setPlanets,
-        // setInputPlanets,
         planetsFilteredByName,
         setPlanetsFilteredByName,
         planetsFilteredByNumber,
         setPlanetsFilteredByNumber,
         filters,
         setFilters,
+        populationFilter,
+        orbitalFilter,
+        diameterFilter,
+        rotationFilter,
+        surfaceFilter,
       } }
     >
       {children}

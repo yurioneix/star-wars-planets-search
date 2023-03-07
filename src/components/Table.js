@@ -5,13 +5,15 @@ export default function Table() {
   const starWarsPlanets = useContext(PlanetContext);
   const {
     planets,
-    // inputPlanets,
-    // setInputPlanets,
     setPlanetsFilteredByName,
     planetsFilteredByName,
-    // planetsFilteredByNumber,
     filters,
     setFilters,
+    populationFilter,
+    orbitalFilter,
+    diameterFilter,
+    rotationFilter,
+    surfaceFilter,
   } = starWarsPlanets;
 
   console.log(planets);
@@ -58,11 +60,61 @@ export default function Table() {
             onChange={ (e) => setColumn(e.target.value) }
             value={ column }
           >
-            <option value="population">population</option>
-            <option value="orbital_period">orbital_period</option>
-            <option value="diameter">diameter</option>
-            <option value="rotation_period">rotation_period</option>
-            <option value="surface_water">surface_water</option>
+            {
+              !populationFilter
+            && (
+              <option
+                value="population"
+              >
+                population
+              </option>
+            )
+            }
+            {
+              !orbitalFilter
+              && (
+                <option
+                  value="orbital_period"
+                  disabled={ orbitalFilter }
+                >
+                  orbital_period
+                </option>
+              )
+            }
+            {
+              !diameterFilter
+              && (
+                <option
+                  value="diameter"
+                  disabled={ diameterFilter }
+                >
+                  diameter
+                </option>
+              )
+            }
+            {
+              !rotationFilter
+              && (
+                <option
+                  value="rotation_period"
+                  disabled={ rotationFilter }
+                >
+                  rotation_period
+                </option>
+              )
+            }
+            {
+              !surfaceFilter
+              && (
+                <option
+                  value="surface_water"
+                  disabled={ surfaceFilter }
+                >
+                  surface_water
+
+                </option>
+              )
+            }
           </select>
         </label>
         <label htmlFor="comparison-filter">
@@ -92,6 +144,11 @@ export default function Table() {
         >
           Filtrar
         </button>
+        {filters.map((filter, index) => (
+          <p key={ index }>
+            {`${filter.column} ${filter.comparison} ${filter.valueFilter}`}
+          </p>
+        ))}
       </div>
       <table>
         <thead>
