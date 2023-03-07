@@ -5,6 +5,10 @@ import PlanetContext from './PlanetContext';
 export default function PlanetProvider({ children }) {
   const [planets, setPlanets] = useState([]);
   const [planetsFilteredByName, setPlanetsFilteredByName] = useState([]);
+  const [planetsFilteredByNumber, setPlanetsFilteredByNumber] = useState([]);
+  const [filters, setFilters] = useState([]);
+
+  // const [inputPlanets, setInputPlanets] = useState('');
 
   useEffect(() => {
     const starWarsPlanets = async () => {
@@ -14,17 +18,57 @@ export default function PlanetProvider({ children }) {
       const { results } = response;
       results.forEach((result) => delete result.residents);
       setPlanets(results);
+      setPlanetsFilteredByName(results);
+      setPlanetsFilteredByNumber(results);
     };
     starWarsPlanets();
   }, []);
+
+  // useEffect(() => {
+  //   const filteredPlanets = () => planets.filter(
+  //     (planet) => planet.name.toLowerCase().includes(inputPlanets.toLowerCase()),
+  //   );
+  //   setPlanetsFilteredByName(filteredPlanets);
+  //   setPlanets(filteredPlanets);
+  // }, [inputPlanets]);
+
+  const filterPlanetsByNumber = ({ column, comparison, valueFilter }) => {
+    const filteredByNumber = planetsFilteredByNumber.filter((planet) => {
+      switch (comparison) {
+      case 'maior que':
+        return Number(planet[column]) > Number(valueFilter);
+      case 'menor que':
+        return Number(planet[column]) < Number(valueFilter);
+      case 'igual a':
+        return Number(planet[column]) === Number(valueFilter);
+      default:
+        return true;
+      }
+    });
+    console.log(filteredByNumber);
+    console.log(valueFilter);
+    return filteredByNumber;
+  };
+
+  useEffect(() => {
+    filters.forEach((filter) => {
+      setPlanetsFilteredByNumber(filterPlanetsByNumber(filter));
+      setPlanets(filterPlanetsByNumber(filter));
+    });
+  }, [filters]);
 
   return (
     <PlanetContext.Provider
       value={ {
         planets,
         setPlanets,
+        // setInputPlanets,
         planetsFilteredByName,
         setPlanetsFilteredByName,
+        planetsFilteredByNumber,
+        setPlanetsFilteredByNumber,
+        filters,
+        setFilters,
       } }
     >
       {children}

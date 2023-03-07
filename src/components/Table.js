@@ -1,19 +1,40 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import PlanetContext from '../context/PlanetContext';
-import useInputPlanets from '../hooks/useInputPlanets';
 
 export default function Table() {
   const starWarsPlanets = useContext(PlanetContext);
-  const input = useInputPlanets('');
-  const { planets, setPlanetsFilteredByName, planetsFilteredByName } = starWarsPlanets;
-  const { inputPlanets } = input;
+  const {
+    planets,
+    // inputPlanets,
+    // setInputPlanets,
+    setPlanetsFilteredByName,
+    planetsFilteredByName,
+    // planetsFilteredByNumber,
+    filters,
+    setFilters,
+  } = starWarsPlanets;
+
+  console.log(planets);
+
+  const [inputPlanets, setInputPlanets] = useState('');
+  const [column, setColumn] = useState('population');
+  const [comparison, setComparison] = useState('maior que');
+  const [valueFilter, setValueFilter] = useState(0);
 
   useEffect(() => {
     const filteredPlanets = planets.filter(
-      (planet) => planet.name.includes(inputPlanets),
+      (planet) => planet.name.toLowerCase().includes(inputPlanets.toLowerCase()),
     );
     setPlanetsFilteredByName(filteredPlanets);
   }, [planets, inputPlanets, setPlanetsFilteredByName]);
+
+  const handleClick = () => {
+    setFilters([...filters, {
+      column,
+      comparison,
+      valueFilter,
+    }]);
+  };
 
   return (
     <>
@@ -22,12 +43,55 @@ export default function Table() {
           <input
             type="text"
             id="input-planet"
-            value={ input.inputPlanets }
+            value={ inputPlanets }
             name="filteredPlanets"
             data-testid="name-filter"
-            onChange={ (e) => input.handleChange(e) }
+            onChange={ (e) => setInputPlanets(e.target.value) }
           />
         </label>
+      </div>
+      <div>
+        <label htmlFor="column-filter">
+          <select
+            id="column-filter"
+            data-testid="column-filter"
+            onChange={ (e) => setColumn(e.target.value) }
+            value={ column }
+          >
+            <option value="population">population</option>
+            <option value="orbital_period">orbital_period</option>
+            <option value="diameter">diameter</option>
+            <option value="rotation_period">rotation_period</option>
+            <option value="surface_water">surface_water</option>
+          </select>
+        </label>
+        <label htmlFor="comparison-filter">
+          <select
+            id="comparison-filter"
+            data-testid="comparison-filter"
+            onChange={ (e) => setComparison(e.target.value) }
+            value={ comparison }
+          >
+            <option value="maior que">maior que</option>
+            <option value="menor que">menor que</option>
+            <option value="igual a">igual a</option>
+          </select>
+        </label>
+        <label htmlFor="value-filter">
+          <input
+            id="value-filter"
+            data-testid="value-filter"
+            type="number"
+            value={ valueFilter }
+            onChange={ (e) => setValueFilter(e.target.value) }
+          />
+        </label>
+        <button
+          data-testid="button-filter"
+          onClick={ handleClick }
+        >
+          Filtrar
+        </button>
       </div>
       <table>
         <thead>
@@ -67,7 +131,8 @@ export default function Table() {
                   <td>{filteredPlanet.url}</td>
                 </tr>
               </tbody>
-            )) : planets?.map((planet) => (
+            ))
+            : planets?.map((planet) => (
               <tbody key={ planet.name }>
                 <tr>
                   <td>{planet.name}</td>
