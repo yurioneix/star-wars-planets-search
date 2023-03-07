@@ -9,19 +9,19 @@ export default function Table() {
     planetsFilteredByName,
     filters,
     setFilters,
-    populationFilter,
-    orbitalFilter,
-    diameterFilter,
-    rotationFilter,
-    surfaceFilter,
   } = starWarsPlanets;
-
-  console.log(planets);
 
   const [inputPlanets, setInputPlanets] = useState('');
   const [column, setColumn] = useState('population');
   const [comparison, setComparison] = useState('maior que');
   const [valueFilter, setValueFilter] = useState(0);
+  const [filterStrings, setFilterStrings] = useState([
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ]);
 
   useEffect(() => {
     const filteredPlanets = planets.filter(
@@ -36,6 +36,9 @@ export default function Table() {
       comparison,
       valueFilter,
     }]);
+    const newfilterStrings = filterStrings.filter((filter) => column !== filter);
+    setFilterStrings(newfilterStrings);
+    setColumn(newfilterStrings[0]);
   };
 
   return (
@@ -61,60 +64,13 @@ export default function Table() {
             value={ column }
           >
             {
-              !populationFilter
-            && (
-              <option
-                value="population"
-              >
-                population
-              </option>
-            )
-            }
-            {
-              !orbitalFilter
-              && (
-                <option
-                  value="orbital_period"
-                  disabled={ orbitalFilter }
-                >
-                  orbital_period
+              filterStrings.map((filter) => (
+                <option value={ filter } key={ filter }>
+                  {filter}
                 </option>
-              )
+              ))
             }
-            {
-              !diameterFilter
-              && (
-                <option
-                  value="diameter"
-                  disabled={ diameterFilter }
-                >
-                  diameter
-                </option>
-              )
-            }
-            {
-              !rotationFilter
-              && (
-                <option
-                  value="rotation_period"
-                  disabled={ rotationFilter }
-                >
-                  rotation_period
-                </option>
-              )
-            }
-            {
-              !surfaceFilter
-              && (
-                <option
-                  value="surface_water"
-                  disabled={ surfaceFilter }
-                >
-                  surface_water
 
-                </option>
-              )
-            }
           </select>
         </label>
         <label htmlFor="comparison-filter">

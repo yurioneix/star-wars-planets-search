@@ -8,12 +8,6 @@ export default function PlanetProvider({ children }) {
   const [planetsFilteredByNumber, setPlanetsFilteredByNumber] = useState([]);
   const [filters, setFilters] = useState([]);
 
-  const [populationFilter, setPopulationFilter] = useState(false);
-  const [orbitalFilter, setOrbitalFilter] = useState(false);
-  const [diameterFilter, setDiameterFilter] = useState(false);
-  const [rotationFilter, setRotationFilter] = useState(false);
-  const [surfaceFilter, setsurfaceFilter] = useState(false);
-
   useEffect(() => {
     const starWarsPlanets = async () => {
       const url = 'https://swapi.dev/api/planets';
@@ -45,30 +39,9 @@ export default function PlanetProvider({ children }) {
   };
 
   useEffect(() => {
-    console.log(filters);
     filters.forEach((filter) => {
       setPlanetsFilteredByNumber(filterPlanetsByNumber(filter));
       setPlanets(filterPlanetsByNumber(filter));
-
-      switch (filter.column) {
-      case 'population':
-        setPopulationFilter(true);
-        break;
-      case 'orbital_period':
-        setOrbitalFilter(true);
-        break;
-      case 'diameter':
-        setDiameterFilter(true);
-        break;
-      case 'rotation_period':
-        setRotationFilter(true);
-        break;
-      case 'surface_water':
-        setsurfaceFilter(true);
-        break;
-      default:
-        return true;
-      }
     });
   }, [filters]);
 
@@ -83,11 +56,6 @@ export default function PlanetProvider({ children }) {
         setPlanetsFilteredByNumber,
         filters,
         setFilters,
-        populationFilter,
-        orbitalFilter,
-        diameterFilter,
-        rotationFilter,
-        surfaceFilter,
       } }
     >
       {children}
