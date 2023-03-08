@@ -29,10 +29,10 @@ export default function PlanetProvider({ children }) {
       return Number(planet[column]) > Number(valueFilter);
     case 'menor que':
       return Number(planet[column]) < Number(valueFilter);
-    case 'igual a':
-      return Number(planet[column]) === Number(valueFilter);
     default:
-      return true;
+      return Number(planet[column]) === Number(valueFilter);
+    // default:
+    //   break;
     }
   });
 
