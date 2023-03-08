@@ -1,12 +1,10 @@
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState } from 'react';
 import PlanetContext from '../context/PlanetContext';
 
 export default function Table() {
   const starWarsPlanets = useContext(PlanetContext);
   const {
-    planets,
-    setPlanetsFilteredByName,
-    planetsFilteredByName,
+    planetsFilteredByNumber,
     filters,
     setFilters,
   } = starWarsPlanets;
@@ -23,12 +21,9 @@ export default function Table() {
     'surface_water',
   ]);
 
-  useEffect(() => {
-    const filteredPlanets = planets.filter(
-      (planet) => planet.name.toLowerCase().includes(inputPlanets.toLowerCase()),
-    );
-    setPlanetsFilteredByName(filteredPlanets);
-  }, [planets, inputPlanets, setPlanetsFilteredByName]);
+  const filterByName = (arrPlanet) => arrPlanet.filter(
+    (planet) => planet.name.toLowerCase().includes(inputPlanets.toLowerCase()),
+  );
 
   const handleClick = () => {
     setFilters([...filters, {
@@ -36,9 +31,19 @@ export default function Table() {
       comparison,
       valueFilter,
     }]);
-    const newfilterStrings = filterStrings.filter((filter) => column !== filter);
-    setFilterStrings(newfilterStrings);
-    setColumn(newfilterStrings[0]);
+
+    const newFilterStrings = filterStrings.filter((filter) => column !== filter);
+    setFilterStrings(newFilterStrings);
+    setColumn(newFilterStrings[0]);
+  };
+
+  const removeAllFilters = () => {
+    setFilters([]);
+  };
+
+  const removeFilter = (columnToRemove) => {
+    const newFilter = filters.filter((filter) => filter.column !== columnToRemove);
+    setFilters(newFilter);
   };
 
   return (
@@ -64,7 +69,7 @@ export default function Table() {
             value={ column }
           >
             {
-              filterStrings.map((filter) => (
+              filterStrings?.map((filter) => (
                 <option value={ filter } key={ filter }>
                   {filter}
                 </option>
@@ -100,10 +105,17 @@ export default function Table() {
         >
           Filtrar
         </button>
+        <button
+          data-testid="button-remove-filters"
+          onClick={ removeAllFilters }
+        >
+          Remover filtros
+        </button>
         {filters.map((filter, index) => (
-          <p key={ index }>
+          <div key={ index } data-testid="filter">
             {`${filter.column} ${filter.comparison} ${filter.valueFilter}`}
-          </p>
+            <button onClick={ () => removeFilter(filter.column) }>Remover</button>
+          </div>
         ))}
       </div>
       <table>
@@ -125,45 +137,25 @@ export default function Table() {
           </tr>
         </thead>
         {
-          planetsFilteredByName.length > 0
-            ? planetsFilteredByName.map((filteredPlanet) => (
-              <tbody key={ filteredPlanet.name }>
-                <tr>
-                  <td>{filteredPlanet.name}</td>
-                  <td>{filteredPlanet.rotation_period}</td>
-                  <td>{filteredPlanet.orbital_period}</td>
-                  <td>{filteredPlanet.diameter}</td>
-                  <td>{filteredPlanet.climate}</td>
-                  <td>{filteredPlanet.gravity}</td>
-                  <td>{filteredPlanet.terrain}</td>
-                  <td>{filteredPlanet.surface_water}</td>
-                  <td>{filteredPlanet.population}</td>
-                  <td>{filteredPlanet.films}</td>
-                  <td>{filteredPlanet.created}</td>
-                  <td>{filteredPlanet.edited}</td>
-                  <td>{filteredPlanet.url}</td>
-                </tr>
-              </tbody>
-            ))
-            : planets?.map((planet) => (
-              <tbody key={ planet.name }>
-                <tr>
-                  <td>{planet.name}</td>
-                  <td>{planet.rotation_period}</td>
-                  <td>{planet.orbital_period}</td>
-                  <td>{planet.diameter}</td>
-                  <td>{planet.climate}</td>
-                  <td>{planet.gravity}</td>
-                  <td>{planet.terrain}</td>
-                  <td>{planet.surface_water}</td>
-                  <td>{planet.population}</td>
-                  <td>{planet.films}</td>
-                  <td>{planet.created}</td>
-                  <td>{planet.edited}</td>
-                  <td>{planet.url}</td>
-                </tr>
-              </tbody>
-            ))
+          filterByName(planetsFilteredByNumber).map((filteredPlanet) => (
+            <tbody key={ filteredPlanet.name }>
+              <tr>
+                <td>{filteredPlanet.name}</td>
+                <td>{filteredPlanet.rotation_period}</td>
+                <td>{filteredPlanet.orbital_period}</td>
+                <td>{filteredPlanet.diameter}</td>
+                <td>{filteredPlanet.climate}</td>
+                <td>{filteredPlanet.gravity}</td>
+                <td>{filteredPlanet.terrain}</td>
+                <td>{filteredPlanet.surface_water}</td>
+                <td>{filteredPlanet.population}</td>
+                <td>{filteredPlanet.films}</td>
+                <td>{filteredPlanet.created}</td>
+                <td>{filteredPlanet.edited}</td>
+                <td>{filteredPlanet.url}</td>
+              </tr>
+            </tbody>
+          ))
         }
       </table>
     </>

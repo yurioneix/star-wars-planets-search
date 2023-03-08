@@ -22,27 +22,26 @@ export default function PlanetProvider({ children }) {
     starWarsPlanets();
   }, []);
 
-  const filterPlanetsByNumber = ({ column, comparison, valueFilter }) => {
-    const filteredByNumber = planetsFilteredByNumber.filter((planet) => {
-      switch (comparison) {
-      case 'maior que':
-        return Number(planet[column]) > Number(valueFilter);
-      case 'menor que':
-        return Number(planet[column]) < Number(valueFilter);
-      case 'igual a':
-        return Number(planet[column]) === Number(valueFilter);
-      default:
-        return true;
-      }
-    });
-    return filteredByNumber;
-  };
+  const filterPlanetsByNumber = ({ column, comparison,
+    valueFilter }, filteredByNumber) => filteredByNumber.filter((planet) => {
+    switch (comparison) {
+    case 'maior que':
+      return Number(planet[column]) > Number(valueFilter);
+    case 'menor que':
+      return Number(planet[column]) < Number(valueFilter);
+    case 'igual a':
+      return Number(planet[column]) === Number(valueFilter);
+    default:
+      return true;
+    }
+  });
 
   useEffect(() => {
+    let filteredByNumber = planets;
     filters.forEach((filter) => {
-      setPlanetsFilteredByNumber(filterPlanetsByNumber(filter));
-      setPlanets(filterPlanetsByNumber(filter));
+      filteredByNumber = filterPlanetsByNumber(filter, filteredByNumber);
     });
+    setPlanetsFilteredByNumber(filteredByNumber);
   }, [filters]);
 
   return (
